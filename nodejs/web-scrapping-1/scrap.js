@@ -1,8 +1,9 @@
 const cheerio = require("cheerio")
 const axios = require("axios")
+const fs = require("fs")
 
 console.clear()
-console.log("web scrappng")
+console.log("web scraping started...")
 
 function scrap1(){
     //کار نمی میکند
@@ -59,13 +60,15 @@ function scrap2(){
     })
 }
 
+const articles = []
+
 function scrapZanooneh(url){
-    const articles = []
+    const start = Date.now()
     axios(url)
     .then((res)=>{
-        const start = Date.now()
         const htmlData = res.data
         console.log(htmlData)
+        console.log('fetch time: ', Date.now()-start )
         const $=cheerio.load(htmlData)
         // console.log($)
         $(".product-5",htmlData).each((index,element)=>{
@@ -73,15 +76,22 @@ function scrapZanooneh(url){
             const price = $(element).children(".product_box").children(".body").children(".info-product").children(".info").children(".d-content").children(".priceItems").children(".price").text().trim()
             articles.push({title,price})
         })
-    console.log(articles)
-    console.log(Date.now()-start)
+        if ($('.next-page').length > 0){
+            let nextPage = $(".next-page").children("a").attr('href')
+            // console.log('go to next page >>>' , nextPage)
+            scrapZanooneh(nextPage)
+        }
+        fs.writeFileSync("zanooneh.json",JSON.stringify(articles),"utf-8")
+        // fs.writeFileSync("zanooneh.json",articles,"utf-8")
+        console.log(articles)
+        console.log("finish time: ",Date.now()-start)
     })
     .catch((err)=>{
         console.log("error : ",err)
     })
 }
 
-console.log("+++++++++++++++++")
+// console.log("+++++++++++++++++")
 // scrap1()
 // scrap2()
 scrapZanooneh("https://www.zanoone.ir/brand/%DA%AF%D9%84%D8%AF%D9%86-%D8%B1%D8%B2-")
