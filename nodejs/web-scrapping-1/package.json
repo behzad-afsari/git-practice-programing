@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node scrap.js",
     "dev": "nodemon scrap.js"
@@ -11,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@json2csv/plainjs": "^6.1.2",
     "axios": "^1.3.2",
-    "cheerio": "^1.0.0-rc.12"
+    "cheerio": "^1.0.0-rc.12",
+    "json2csv": "^6.0.0-alpha.2"
   }
 }
